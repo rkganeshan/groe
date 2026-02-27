@@ -1,0 +1,16 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# Auxiliary documentation (consolidated into README.md)
+TECHNICAL_WALKTHROUGH.md
+QUICK_REFERENCE.md
+FINAL_WALKTHROUGH.md
+TECHNICAL_FAQ.md
+PRESENTATION_SCRIPT.md
+DOCUMENTATION_SUMMARY.md
+docs/DOCUMENTATION_INDEX.md
+docs/ARCHITECTURE_DIAGRAMS.md
+docs/DEVELOPER.md
+docs/USER_GUIDE.md

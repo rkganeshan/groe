@@ -1,0 +1,217 @@
+{
+  "version": "1.0.0",
+  "exportedAt": 1708300000000,
+  "groups": [
+    {
+      "id": "group-error-states",
+      "name": "Error States",
+      "enabled": true,
+      "createdAt": 1708300000000
+    },
+    {
+      "id": "group-edge-cases",
+      "name": "Edge Cases",
+      "enabled": true,
+      "createdAt": 1708300000000
+    },
+    {
+      "id": "group-plan-states",
+      "name": "Plan States",
+      "enabled": false,
+      "description": "Different plan-related states",
+      "createdAt": 1708300000000
+    }
+  ],
+  "rules": [
+    {
+      "id": "rule-getuser-success",
+      "name": "GetUser — Success",
+      "enabled": true,
+      "endpoint": "/graphql",
+      "operationName": "GetUser",
+      "operationMatchType": "exact",
+      "queryRegex": "",
+      "variableConditions": [],
+      "response": {
+        "data": {
+          "user": {
+            "id": "1234",
+            "name": "Jane Doe",
+            "email": "jane@example.com",
+            "role": "ADMIN",
+            "status": "ACTIVE",
+            "plan": "enterprise"
+          }
+        }
+      },
+      "statusCode": 200,
+      "priority": 0,
+      "delay": 0,
+      "createdAt": 1708300000000,
+      "updatedAt": 1708300000000
+    },
+    {
+      "id": "rule-getuser-suspended",
+      "name": "GetUser — Suspended Account",
+      "enabled": true,
+      "endpoint": "/graphql",
+      "operationName": "GetUser",
+      "operationMatchType": "exact",
+      "queryRegex": "",
+      "variableConditions": [
+        { "field": "userId", "operator": "equals", "value": "suspended-user" }
+      ],
+      "response": {
+        "data": {
+          "user": {
+            "id": "suspended-user",
+            "name": "Suspended User",
+            "email": "suspended@example.com",
+            "status": "SUSPENDED",
+            "suspendedAt": "2024-01-15T00:00:00Z",
+            "suspendReason": "Terms of Service violation"
+          }
+        }
+      },
+      "statusCode": 200,
+      "priority": 10,
+      "groupId": "group-edge-cases",
+      "delay": 0,
+      "createdAt": 1708300000000,
+      "updatedAt": 1708300000000
+    },
+    {
+      "id": "rule-unauthorized",
+      "name": "Any Query — Unauthorized Error",
+      "enabled": false,
+      "endpoint": "/graphql",
+      "operationName": "",
+      "operationMatchType": "exact",
+      "queryRegex": "",
+      "variableConditions": [],
+      "response": {
+        "errors": [
+          {
+            "message": "Authentication required",
+            "extensions": {
+              "code": "UNAUTHENTICATED"
+            }
+          }
+        ]
+      },
+      "statusCode": 401,
+      "priority": 100,
+      "groupId": "group-error-states",
+      "delay": 0,
+      "createdAt": 1708300000000,
+      "updatedAt": 1708300000000
+    },
+    {
+      "id": "rule-server-error",
+      "name": "ListProducts — Internal Server Error",
+      "enabled": false,
+      "endpoint": "/graphql",
+      "operationName": "ListProducts",
+      "operationMatchType": "exact",
+      "queryRegex": "",
+      "variableConditions": [],
+      "response": {
+        "errors": [
+          {
+            "message": "Internal server error",
+            "extensions": {
+              "code": "INTERNAL_SERVER_ERROR"
+            }
+          }
+        ]
+      },
+      "statusCode": 500,
+      "priority": 5,
+      "groupId": "group-error-states",
+      "delay": 2000,
+      "createdAt": 1708300000000,
+      "updatedAt": 1708300000000
+    },
+    {
+      "id": "rule-plan-expired",
+      "name": "GetSubscription — Plan Expired",
+      "enabled": true,
+      "endpoint": "/graphql",
+      "operationName": "GetSubscription",
+      "operationMatchType": "exact",
+      "queryRegex": "",
+      "variableConditions": [],
+      "response": {
+        "data": {
+          "subscription": {
+            "id": "sub-001",
+            "plan": "free",
+            "status": "EXPIRED",
+            "expiresAt": "2023-12-31T23:59:59Z",
+            "features": [],
+            "canUpgrade": true
+          }
+        }
+      },
+      "statusCode": 200,
+      "priority": 0,
+      "groupId": "group-plan-states",
+      "delay": 500,
+      "createdAt": 1708300000000,
+      "updatedAt": 1708300000000
+    },
+    {
+      "id": "rule-regex-mutations",
+      "name": "All Mutations — Forbidden",
+      "enabled": false,
+      "endpoint": "/graphql",
+      "operationName": "^(Create|Update|Delete)",
+      "operationMatchType": "regex",
+      "queryRegex": "mutation",
+      "variableConditions": [],
+      "response": {
+        "errors": [
+          {
+            "message": "Write operations are temporarily disabled",
+            "extensions": {
+              "code": "FORBIDDEN"
+            }
+          }
+        ]
+      },
+      "statusCode": 403,
+      "priority": 50,
+      "groupId": "group-error-states",
+      "delay": 0,
+      "createdAt": 1708300000000,
+      "updatedAt": 1708300000000
+    },
+    {
+      "id": "rule-empty-list",
+      "name": "SearchResults — Empty",
+      "enabled": true,
+      "endpoint": "/graphql",
+      "operationName": "SearchResults",
+      "operationMatchType": "exact",
+      "queryRegex": "",
+      "variableConditions": [
+        { "field": "query", "operator": "equals", "value": "empty-test" }
+      ],
+      "response": {
+        "data": {
+          "search": {
+            "results": [],
+            "totalCount": 0,
+            "hasNextPage": false
+          }
+        }
+      },
+      "statusCode": 200,
+      "priority": 0,
+      "groupId": "group-edge-cases",
+      "delay": 0,
+      "createdAt": 1708300000000,
+      "updatedAt": 1708300000000
+    }
+  ]
+}
