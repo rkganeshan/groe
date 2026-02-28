@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import ReactDOM from "react-dom";
+import React, { useState, useRef } from "react";
 import { Rule, RuleGroup } from "../../shared/types";
+import ConfirmPopover from "./ConfirmPopover";
+import Tooltip from "./Tooltip";
 
 interface RuleCardProps {
   rule: Rule;
@@ -21,110 +22,60 @@ const RuleCard: React.FC<RuleCardProps> = ({
 }) => {
   const group = groups.find((g) => g.id === rule.groupId);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const popoverRef = useRef<HTMLDivElement>(null);
   const deleteBtnRef = useRef<HTMLButtonElement>(null);
-  const [popoverPos, setPopoverPos] = useState<{ top: number; left: number }>({
-    top: 0,
-    left: 0,
-  });
-
-  useEffect(() => {
-    if (!confirmDelete) return;
-    // Position the popover below the delete button
-    if (deleteBtnRef.current) {
-      const rect = deleteBtnRef.current.getBoundingClientRect();
-      setPopoverPos({
-        top: rect.bottom + 6,
-        left: rect.right,
-      });
-    }
-    function handleClick(e: MouseEvent) {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(e.target as Node) &&
-        deleteBtnRef.current &&
-        !deleteBtnRef.current.contains(e.target as Node)
-      ) {
-        setConfirmDelete(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [confirmDelete]);
 
   return (
     <div className={`rule-card ${!rule.enabled ? "disabled" : ""}`}>
       <div className="rule-card-header">
         <span className="rule-card-title">{rule.name}</span>
         <div className="rule-card-actions">
-          <label
-            className="toggle-switch-sm"
-            data-tooltip={rule.enabled ? "Disable rule" : "Enable rule"}
-          >
-            <input
-              type="checkbox"
-              checked={rule.enabled}
-              onChange={() => onToggle(rule.id)}
-            />
-            <span className="toggle-slider-sm" />
-          </label>
-          <button
-            className="btn-icon"
-            data-tooltip="Edit rule"
-            onClick={() => onEdit(rule)}
-          >
-            {"\u270E"}
-          </button>
-          <button
-            className="btn-icon"
-            data-tooltip="Duplicate rule"
-            onClick={() => onDuplicate(rule)}
-          >
-            {"\u2398"}
-          </button>
-          <button
-            ref={deleteBtnRef}
-            className="btn-icon"
-            data-tooltip="Delete rule"
-            onClick={() => setConfirmDelete(true)}
-          >
-            {"\u2715"}
-          </button>
+          <Tooltip content={rule.enabled ? "Disable rule" : "Enable rule"}>
+            <label className="toggle-switch-sm">
+              <input
+                type="checkbox"
+                checked={rule.enabled}
+                onChange={() => onToggle(rule.id)}
+              />
+              <span className="toggle-slider-sm" />
+            </label>
+          </Tooltip>
+          <Tooltip content="Edit rule">
+            <button
+              className="btn-icon"
+              onClick={() => onEdit(rule)}
+            >
+              {"\u270E"}
+            </button>
+          </Tooltip>
+          <Tooltip content="Duplicate rule">
+            <button
+              className="btn-icon"
+              onClick={() => onDuplicate(rule)}
+            >
+              {"\u2398"}
+            </button>
+          </Tooltip>
+          <Tooltip content="Delete rule">
+            <button
+              ref={deleteBtnRef}
+              className="btn-icon"
+              onClick={() => setConfirmDelete(true)}
+            >
+              {"\u2715"}
+            </button>
+          </Tooltip>
         </div>
       </div>
-      {confirmDelete &&
-        ReactDOM.createPortal(
-          <div
-            className="confirm-delete-popover"
-            ref={popoverRef}
-            style={{
-              position: "fixed",
-              top: popoverPos.top,
-              left: popoverPos.left,
-              transform: "translateX(-100%)",
-            }}
-          >
-            <p>Delete &ldquo;{rule.name}&rdquo;?</p>
-            <div className="confirm-actions">
-              <button
-                className="btn btn-sm"
-                onClick={() => setConfirmDelete(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn-danger"
-                onClick={() => {
-                  setConfirmDelete(false);
-                  onDelete(rule.id);
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          </div>,
-          document.body,
-        )}
+      <ConfirmPopover
+        isOpen={confirmDelete}
+        anchorRef={deleteBtnRef}
+        onClose={() => setConfirmDelete(false)}
+        onConfirm={() => {
+          setConfirmDelete(false);
+          onDelete(rule.id);
+        }}
+        message={<>Delete &ldquo;{rule.name}&rdquo;?</>}
+      />
       <div className="rule-card-meta">
         {rule.endpoint && (
           <span className="rule-meta-tag endpoint">{rule.endpoint}</span>

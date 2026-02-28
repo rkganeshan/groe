@@ -7,6 +7,7 @@ import {
   ResponseMode,
   createDefaultRule,
 } from "../../shared/types";
+import Tooltip from "./Tooltip";
 
 interface RuleEditorProps {
   rule: Rule | null;
@@ -102,9 +103,11 @@ const RuleEditor: React.FC<RuleEditorProps> = ({
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{isNew ? "Create Rule" : "Edit Rule"}</h2>
-          <button className="btn-icon" data-tooltip="Close" onClick={onCancel}>
-            {"\u2715"}
-          </button>
+          <Tooltip content="Close" position="left">
+            <button className="btn-icon" onClick={onCancel}>
+              {"\u2715"}
+            </button>
+          </Tooltip>
         </div>
         <div className="modal-body">
           <div className="form-row">
@@ -272,13 +275,14 @@ const RuleEditor: React.FC<RuleEditorProps> = ({
                       updateCondition(idx, { value: e.target.value })
                     }
                   />
-                  <button
-                    className="btn-icon"
-                    data-tooltip="Remove condition"
-                    onClick={() => removeCondition(idx)}
-                  >
-                    {"\u2715"}
-                  </button>
+                  <Tooltip content="Remove condition">
+                    <button
+                      className="btn-icon"
+                      onClick={() => removeCondition(idx)}
+                    >
+                      {"\u2715"}
+                    </button>
+                  </Tooltip>
                 </div>
               ))}
             </div>

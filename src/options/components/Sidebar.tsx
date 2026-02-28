@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { RuleGroup } from "../../shared/types";
+import ConfirmPopover from "./ConfirmPopover";
+import Tooltip from "./Tooltip";
 
 interface SidebarProps {
   groups: RuleGroup[];
@@ -31,21 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!confirmDeleteId) return;
-    function handleClick(e: MouseEvent) {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(e.target as Node)
-      ) {
-        setConfirmDeleteId(null);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [confirmDeleteId]);
+  const deleteBtnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   function handleAdd() {
     const trimmed = newName.trim();
@@ -111,64 +99,54 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <span style={{ opacity: g.enabled ? 1 : 0.4 }}>{g.name}</span>
                 <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
                   <span className="count">{groupRuleCounts[g.id] || 0}</span>
-                  <button
-                    className="btn-icon"
-                    data-tooltip={g.enabled ? "Disable group" : "Enable group"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleGroup(g.id);
-                    }}
-                  >
-                    {g.enabled ? "\u25CF" : "\u25CB"}
-                  </button>
-                  <button
-                    className="btn-icon"
-                    data-tooltip="Rename group"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      startRename(g);
-                    }}
-                  >
-                    {"\u270E"}
-                  </button>
+                  <Tooltip content={g.enabled ? "Disable group" : "Enable group"}>
+                    <button
+                      className="btn-icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleGroup(g.id);
+                      }}
+                    >
+                      {g.enabled ? "\u25CF" : "\u25CB"}
+                    </button>
+                  </Tooltip>
+                  <Tooltip content="Rename group">
+                    <button
+                      className="btn-icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startRename(g);
+                      }}
+                    >
+                      {"\u270E"}
+                    </button>
+                  </Tooltip>
                   <div
                     style={{ position: "relative", display: "inline-block" }}
                   >
-                    <button
-                      className="btn-icon"
-                      data-tooltip="Delete group"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setConfirmDeleteId(g.id);
-                      }}
-                    >
-                      {"\u2715"}
-                    </button>
-                    {confirmDeleteId === g.id && (
-                      <div
-                        className="confirm-delete-popover"
-                        ref={popoverRef}
-                        onClick={(e) => e.stopPropagation()}
+                    <Tooltip content="Delete group">
+                      <button
+                        className="btn-icon"
+                        ref={(el) => (deleteBtnRefs.current[g.id] = el)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setConfirmDeleteId(g.id);
+                        }}
                       >
-                        <p>Delete &ldquo;{g.name}&rdquo;?</p>
-                        <div className="confirm-actions">
-                          <button
-                            className="btn btn-sm"
-                            onClick={() => setConfirmDeleteId(null)}
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            className="btn-danger"
-                            onClick={() => {
-                              setConfirmDeleteId(null);
-                              onDeleteGroup(g.id);
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
+                        {"\u2715"}
+                      </button>
+                    </Tooltip>
+                    {confirmDeleteId === g.id && deleteBtnRefs.current[g.id] && (
+                      <ConfirmPopover
+                        isOpen={true}
+                        anchorRef={{ current: deleteBtnRefs.current[g.id] as HTMLElement }}
+                        onClose={() => setConfirmDeleteId(null)}
+                        onConfirm={() => {
+                          setConfirmDeleteId(null);
+                          onDeleteGroup(g.id);
+                        }}
+                        message={<>Delete &ldquo;{g.name}&rdquo;?</>}
+                      />
                     )}
                   </div>
                 </div>

@@ -10,6 +10,7 @@ import Sidebar from "./components/Sidebar";
 import RuleCard from "./components/RuleCard";
 import RuleEditor from "./components/RuleEditor";
 import Toast from "./components/Toast";
+import Tooltip from "./components/Tooltip";
 
 function sendMessage(msg: ExtensionMessage): Promise<unknown> {
   return new Promise((resolve, reject) => {
@@ -227,20 +228,22 @@ const OptionsApp: React.FC = () => {
           </div>
         </div>
         <div className="options-header-actions">
-          <button
-            className="btn"
-            data-tooltip="Export rules as JSON"
-            onClick={handleExport}
-          >
-            Export
-          </button>
-          <button
-            className="btn"
-            data-tooltip="Import rules from JSON"
-            onClick={() => fileInput.current?.click()}
-          >
-            Import
-          </button>
+          <Tooltip content="Export rules as JSON">
+            <button
+              className="btn"
+              onClick={handleExport}
+            >
+              Export
+            </button>
+          </Tooltip>
+          <Tooltip content="Import rules from JSON">
+            <button
+              className="btn"
+              onClick={() => fileInput.current?.click()}
+            >
+              Import
+            </button>
+          </Tooltip>
           <input
             ref={fileInput}
             type="file"
