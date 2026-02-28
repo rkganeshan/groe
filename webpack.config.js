@@ -1,6 +1,7 @@
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 
 module.exports = {
   entry: {
@@ -46,6 +47,19 @@ module.exports = {
       template: "./src/options/options.html",
       filename: "options/index.html",
       chunks: ["options"],
+    }),
+    new MonacoWebpackPlugin({
+      languages: ["json"],
+      features: [
+        "bracketMatching",
+        "clipboard",
+        "find",
+        "folding",
+        "hover",
+        "indentation",
+        "suggest",
+        "wordHighlighter",
+      ],
     }),
   ],
   optimization: {

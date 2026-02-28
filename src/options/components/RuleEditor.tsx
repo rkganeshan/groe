@@ -8,6 +8,8 @@ import {
   createDefaultRule,
 } from "../../shared/types";
 import Tooltip from "./Tooltip";
+import CodeEditor from "./CodeEditor";
+import Modal from "./Modal";
 
 interface RuleEditorProps {
   rule: Rule | null;
@@ -99,17 +101,28 @@ const RuleEditor: React.FC<RuleEditorProps> = ({
   }
 
   return (
-    <div className="modal-overlay" onClick={onCancel}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>{isNew ? "Create Rule" : "Edit Rule"}</h2>
-          <Tooltip content="Close" position="left">
-            <button className="btn-icon" onClick={onCancel}>
-              {"\u2715"}
-            </button>
-          </Tooltip>
-        </div>
-        <div className="modal-body">
+    <Modal
+      title={isNew ? "Create Rule" : "Edit Rule"}
+      className="rule-editor-modal"
+      onClose={onCancel}
+      footer={
+        <>
+          <button className="btn" onClick={onCancel}>
+            Cancel
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={handleSave}
+            disabled={!!responseError || !form.name.trim()}
+          >
+            {isNew ? "Create Rule" : "Save Changes"}
+          </button>
+        </>
+      }
+    >
+      <div className="rule-editor-layout">
+        {/* ——— Left: Form Fields ——— */}
+        <div className="rule-editor-form">
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">Rule Name</label>
@@ -287,7 +300,10 @@ const RuleEditor: React.FC<RuleEditorProps> = ({
               ))}
             </div>
           </div>
+        </div>
 
+        {/* ——— Right: Response Config + JSON Editor ——— */}
+        <div className="rule-editor-json">
           <div className="form-group">
             <label className="form-label">Response Mode</label>
             <span className="form-sublabel">
@@ -313,29 +329,27 @@ const RuleEditor: React.FC<RuleEditorProps> = ({
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">
-              {(form.responseMode || "mock") === "mock"
-                ? "Mock Response Body (JSON)"
-                : "Override Patch (JSON — merged into real response)"}
-            </label>
-            {form.responseMode === "override" && (
-              <span className="form-sublabel">
-                Only include the keys you want to add or change. Use null to
-                remove a key. Nested objects are deep-merged.
-              </span>
-            )}
-            <textarea
-              className={`form-textarea ${responseError ? "error" : ""}`}
-              value={responseText}
-              onChange={(e) => handleResponseChange(e.target.value)}
-              spellCheck={false}
-            />
-            {responseError && <div className="form-error">{responseError}</div>}
-          </div>
+          <label className="form-label">
+            {(form.responseMode || "mock") === "mock"
+              ? "Mock Response Body (JSON)"
+              : "Override Patch (JSON)"}
+          </label>
+          {form.responseMode === "override" && (
+            <span className="form-sublabel">
+              Only include the keys you want to add or change. Use null to
+              remove a key. Nested objects are deep-merged.
+            </span>
+          )}
+          <CodeEditor
+            language="json"
+            value={responseText}
+            onChange={handleResponseChange}
+            flex
+          />
+          {responseError && <div className="form-error">{responseError}</div>}
 
           {form.responseMode === "override" && (
-            <div className="form-group">
+            <div className="form-group" style={{ marginTop: 16 }}>
               <label className="form-label">Override Query (optional)</label>
               <span className="form-sublabel">
                 If your app&apos;s GraphQL query includes new fields that
@@ -344,33 +358,19 @@ const RuleEditor: React.FC<RuleEditorProps> = ({
                 to the backend instead, then merge your override response on
                 top. Leave empty to forward the original query as-is.
               </span>
-              <textarea
-                className="form-textarea"
-                style={{ minHeight: 100 }}
+              <CodeEditor
+                language="plaintext"
                 value={form.overrideQuery || ""}
-                onChange={(e) =>
-                  updateField("overrideQuery", e.target.value || undefined)
+                onChange={(val) =>
+                  updateField("overrideQuery", val || undefined)
                 }
-                placeholder={`query GetAssetCPUDetailsV2($input: AssetCPUDetailsInput!) {\n  getAssetCPUDetailsV2(input: $input) {\n    cpuName\n    cpuSpeed\n    ...\n  }\n}`}
-                spellCheck={false}
+                height={120}
               />
             </div>
           )}
         </div>
-        <div className="modal-footer">
-          <button className="btn" onClick={onCancel}>
-            Cancel
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={handleSave}
-            disabled={!!responseError || !form.name.trim()}
-          >
-            {isNew ? "Create Rule" : "Save Changes"}
-          </button>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

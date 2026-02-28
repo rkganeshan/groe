@@ -399,7 +399,8 @@ body {
   width: 740px;
   max-width: 92vw;
   max-height: 90vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   box-shadow: var(--shadow-lg);
 }
 
@@ -409,6 +410,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -420,6 +422,9 @@ body {
 
 .modal-body {
   padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-footer {
@@ -428,6 +433,60 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ——— Rule Editor: two-column layout ——— */
+.rule-editor-modal {
+  width: 1100px;
+  max-width: 95vw;
+  height: 88vh;
+}
+
+.rule-editor-modal>.modal-body {
+  padding: 0;
+  overflow: hidden;
+}
+
+.rule-editor-layout {
+  display: flex;
+  height: 100%;
+}
+
+.rule-editor-form {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  min-width: 0;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.rule-editor-json {
+  flex: 1;
+  min-width: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.code-editor-wrapper:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.code-editor-flex {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.code-editor-flex>section,
+.code-editor-flex>div {
+  flex: 1;
+  min-height: 0;
 }
 
 /* Form Fields */
@@ -494,6 +553,8 @@ body {
 .form-row {
   display: flex;
   gap: 12px;
+  align-items: flex-end;
+  margin-block: 8px;
 }
 
 .form-row>* {
@@ -792,4 +853,106 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--border-strong);
+}
+
+/* ——— Code Editor Wrapper ——— */
+.code-editor-wrapper {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* ——— Import from cURL Button ——— */
+.btn-outline-accent {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent-muted);
+}
+
+.btn-outline-accent:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ——— cURL Import Modal ——— */
+.curl-import-modal {
+  width: 820px;
+  max-width: 95vw;
+}
+
+.curl-import-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.curl-input-panel {
+  flex: 1;
+}
+
+.curl-preview-panel {
+  flex: 1;
+}
+
+.curl-preview-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36px 24px;
+  color: var(--text-muted);
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.curl-preview-empty-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.curl-preview-empty p {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* ——— Preview Fields ——— */
+.curl-preview-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.preview-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.preview-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.preview-value {
+  font-size: 13px;
+  color: var(--text-primary);
+  word-break: break-all;
+  font-family: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
+}
+
+.preview-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
 }
