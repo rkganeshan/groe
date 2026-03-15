@@ -1,0 +1,50 @@
+/* Notion-inspired Dark Theme Variables */
+:root {
+  --bg-primary: #191919;
+  --bg-secondary: #202020;
+  --bg-tertiary: #252525;
+  --bg-elevated: #2c2c2c;
+  --bg-hover: rgba(255, 255, 255, 0.055);
+  --bg-active: rgba(255, 255, 255, 0.08);
+  --bg-surface: #1e1e1e;
+
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-default: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.13);
+  --border-focus: rgba(46, 170, 220, 0.5);
+
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.70);
+  --text-muted: rgba(255, 255, 255, 0.50);
+  --text-inverse: #191919;
+
+  /* Notion Blue Accent */
+  --accent: #2eaadc;
+  --accent-hover: #069cba;
+  /* Slightly darker/different for hover */
+  --accent-subtle: rgba(46, 170, 220, 0.1);
+  --accent-muted: rgba(46, 170, 220, 0.2);
+  --accent-glow: rgba(46, 170, 220, 0.15);
+
+  --success: #0f7b6c;
+  /* Green */
+  --success-bg: rgba(15, 123, 108, 0.1);
+  --error: #eb5757;
+  /* Red */
+  --error-bg: rgba(235, 87, 87, 0.1);
+  --warning: #d9730d;
+  /* Orange/Brown */
+  --warning-bg: rgba(217, 115, 13, 0.1);
+  --info: #2eaadc;
+  --info-bg: rgba(46, 170, 220, 0.1);
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-full: 999px;
+
+  --shadow-sm: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 2px 4px;
+  --shadow-md: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px, rgba(15, 15, 15, 0.2) 0px 9px 24px;
+  --shadow-lg: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 5px 10px, rgba(15, 15, 15, 0.2) 0px 15px 40px;
+  --shadow-glow: 0 0 0 2px var(--border-focus);
+}

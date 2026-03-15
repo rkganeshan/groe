@@ -9,7 +9,9 @@ import {
 import Sidebar from "./components/Sidebar";
 import RuleCard from "./components/RuleCard";
 import RuleEditor from "./components/RuleEditor";
+import CurlImportModal from "./components/CurlImportModal";
 import Toast from "./components/Toast";
+import Tooltip from "./components/Tooltip";
 
 function sendMessage(msg: ExtensionMessage): Promise<unknown> {
   return new Promise((resolve, reject) => {
@@ -36,6 +38,7 @@ const OptionsApp: React.FC = () => {
     message: string;
     type: "success" | "error";
   } | null>(null);
+  const [showCurlImport, setShowCurlImport] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const loadData = useCallback(async () => {
@@ -227,20 +230,22 @@ const OptionsApp: React.FC = () => {
           </div>
         </div>
         <div className="options-header-actions">
-          <button
-            className="btn"
-            data-tooltip="Export rules as JSON"
-            onClick={handleExport}
-          >
-            Export
-          </button>
-          <button
-            className="btn"
-            data-tooltip="Import rules from JSON"
-            onClick={() => fileInput.current?.click()}
-          >
-            Import
-          </button>
+          <Tooltip content="Export rules as JSON">
+            <button
+              className="btn"
+              onClick={handleExport}
+            >
+              Export
+            </button>
+          </Tooltip>
+          <Tooltip content="Import rules from JSON">
+            <button
+              className="btn"
+              onClick={() => fileInput.current?.click()}
+            >
+              Import
+            </button>
+          </Tooltip>
           <input
             ref={fileInput}
             type="file"
@@ -276,6 +281,14 @@ const OptionsApp: React.FC = () => {
               />
             </div>
             <div className="toolbar-right">
+              <Tooltip content="Create a rule by importing a cURL command">
+                <button
+                  className="btn btn-outline-accent"
+                  onClick={() => setShowCurlImport(true)}
+                >
+                  ⤓ Import from cURL
+                </button>
+              </Tooltip>
               <button
                 className="btn btn-primary"
                 onClick={() => setEditingRule(null)}
@@ -327,6 +340,16 @@ const OptionsApp: React.FC = () => {
           groups={groups}
           onSave={handleSaveRule}
           onCancel={() => setEditingRule(undefined)}
+        />
+      )}
+
+      {showCurlImport && (
+        <CurlImportModal
+          onImport={(rule) => {
+            setShowCurlImport(false);
+            setEditingRule(rule);
+          }}
+          onCancel={() => setShowCurlImport(false)}
         />
       )}
 
