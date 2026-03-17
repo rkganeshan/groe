@@ -1,18 +1,27 @@
 {
   "manifest_version": 3,
   "name": "GraphQL Request Override (GROE)",
-  "version": "1.0.0",
-  "description": "Intercept and mock GraphQL responses by operation name, query pattern, and variable conditions — no backend changes required.",
-  "permissions": ["storage", "activeTab"],
-  "host_permissions": ["<all_urls>"],
+  "version": "1.1.0",
+  "description": "Intercept and mock GraphQL responses by operation name, query pattern, and variable conditions \u2014 no backend changes required.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "background": {
     "service_worker": "background/index.js",
     "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content/index.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/index.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
@@ -35,8 +44,12 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["injected/intercept.js"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "injected/intercept.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }
