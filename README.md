@@ -8,6 +8,12 @@
   A Chrome Extension (Manifest V3) that intercepts GraphQL requests and returns mock or overridden responses based on configurable rules — without touching backend code, proxy servers, or application source.
 </p>
 
+<p align="center">
+  <img alt="Version" src="https://img.shields.io/badge/version-1.1.0-blue" />
+  <img alt="Manifest V3" src="https://img.shields.io/badge/Manifest-V3-green" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.3-blue" />
+</p>
+
 ---
 
 ## Why GROE?
@@ -32,6 +38,7 @@ Frontend developers and QA engineers frequently need to:
 
 - **Mock mode** — block the request entirely and return a fake response
 - **Override mode** — let the request hit the backend, then deep-merge your patches into the real response
+- **cURL Import** _(new in v1.1.0)_ — create rules by pasting a cURL command; endpoint and body are auto-parsed
 - **Operation-level matching** — match by operation name (exact or regex), endpoint URL, query body regex, or variable conditions
 - **Variable conditions** — 6 operators: equals, not_equals, contains, regex, exists, not_exists
 - **Batched query support** — individually match operations within a single batched GraphQL request
@@ -51,7 +58,7 @@ Frontend developers and QA engineers frequently need to:
 | Tool    | Version                         |
 | ------- | ------------------------------- |
 | Node.js | 18+ (recommended: 20.x via nvm) |
-| npm     | 9+                              |
+| npm/pnpm| 9+                              |
 | Chrome  | 116+ (Manifest V3 support)      |
 
 ### Install, Build, Load
@@ -59,10 +66,11 @@ Frontend developers and QA engineers frequently need to:
 ```bash
 # 1. Clone
 git clone <repo-url>
-cd superops-gql-interceptor
+cd groe
 
-# 2. Install dependencies
-npm install
+# 2. Install dependencies (pnpm recommended)
+pnpm install
+# or: npm install
 
 # 3. Build
 npm run build        # production (minified)
@@ -110,6 +118,10 @@ Open **Manage Rules** (or right-click → Options) and click **+ New Rule**.
 | Response Mode       | —        | **Mock** (block & return fake) or **Override** (merge into real)                                         |
 | Response Body       | Yes      | The JSON to return (mock) or merge (override)                                                            |
 | Override Query      | No       | _(Override mode only)_ Clean query to send to backend when your app queries fields not yet in the schema |
+
+### cURL Import _(v1.1.0)_
+
+Click **Import from cURL** in the options page to open the cURL import modal. Paste any valid cURL command and GROE will auto-detect the endpoint URL and request body to pre-fill a new rule. Supports `-H`, `-d`, `--data`, `--url`, and method flags.
 
 ### Mock vs Override Mode
 
@@ -192,12 +204,12 @@ Supports dot-notation for nested paths (e.g. `input.assetId`).
 
 ```
 src/
-├── shared/            # Types, matching engine, storage layer
+├── shared/            # Types, matching engine, storage layer, parseCurl
 ├── background/        # Service worker (message routing, badge)
 ├── content/           # Content script (bridge between page and extension)
 ├── popup/             # Browser action popup (toggle, stats)
 ├── options/           # Full rule management UI (React)
-│   └── components/    # RuleCard, RuleEditor, Sidebar, Toast
+│   └── components/    # RuleCard, RuleEditor, Sidebar, Toast, Tooltip, Modal, CurlImportModal, CodeEditor
 └── __tests__/         # Unit tests (Jest)
 public/
 ├── manifest.json      # Chrome Extension manifest (MV3)
@@ -212,6 +224,7 @@ public/
 | `src/shared/types.ts`           | All TypeScript interfaces and factory functions       |
 | `src/shared/matching-engine.ts` | Core logic — matches a request against rules          |
 | `src/shared/storage.ts`         | CRUD wrapper around `chrome.storage.local`            |
+| `src/shared/parseCurl.ts`       | cURL command parser for import functionality          |
 | `src/background/index.ts`       | Service worker — message router, badge management     |
 | `src/content/index.ts`          | Content script — injects interceptor, relays messages |
 | `public/injected/intercept.js`  | Vanilla JS — patches `fetch` and `XMLHttpRequest`     |
@@ -306,6 +319,12 @@ Yes. Rules apply globally. The popup shows stats for the active tab.
 
 **Can mock data accidentally ship to production?**
 No. GROE is a browser extension — it only exists on machines where it's installed.
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full release history.
 
 ---
 
