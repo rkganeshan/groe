@@ -24,11 +24,26 @@ const RuleCard: React.FC<RuleCardProps> = ({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const deleteBtnRef = useRef<HTMLButtonElement>(null);
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onEdit(rule);
+    }
+  }
+
   return (
-    <div className={`rule-card ${!rule.enabled ? "disabled" : ""}`}>
+    <div
+      role="button"
+      tabIndex={0}
+      className={`rule-card ${!rule.enabled ? "disabled" : ""}`}
+      onClick={() => onEdit(rule)}
+      onKeyDown={handleKeyDown}
+      aria-label={`Edit rule: ${rule.name}`}
+    >
       <div className="rule-card-header">
         <span className="rule-card-title">{rule.name}</span>
-        <div className="rule-card-actions">
+        <div className="rule-card-actions" onClick={(e) => e.stopPropagation()}>
           <Tooltip content={rule.enabled ? "Disable rule" : "Enable rule"}>
             <label className="toggle-switch-sm">
               <input
@@ -40,18 +55,12 @@ const RuleCard: React.FC<RuleCardProps> = ({
             </label>
           </Tooltip>
           <Tooltip content="Edit rule">
-            <button
-              className="btn-icon"
-              onClick={() => onEdit(rule)}
-            >
+            <button className="btn-icon" onClick={() => onEdit(rule)}>
               {"\u270E"}
             </button>
           </Tooltip>
           <Tooltip content="Duplicate rule">
-            <button
-              className="btn-icon"
-              onClick={() => onDuplicate(rule)}
-            >
+            <button className="btn-icon" onClick={() => onDuplicate(rule)}>
               {"\u2398"}
             </button>
           </Tooltip>
