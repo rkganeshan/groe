@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GraphQL Request Override (GROE)",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Intercept and mock GraphQL responses by operation name, query pattern, and variable conditions \u2014 no backend changes required.",
   "permissions": [
     "storage",
