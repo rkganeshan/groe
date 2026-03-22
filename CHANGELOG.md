@@ -6,6 +6,24 @@ The format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [1.2.0] — 2026-03-19
+
+### Added
+
+- **Modal keyboard accessibility** — Modal closes on Escape key.
+- **RuleCard keyboard support** — Entire card is keyboard-activatable (Enter/Space) and clickable to edit; `role="button"`, `tabIndex={0}`, `aria-label` for screen readers.
+- **RuleEditor resizable layout** — Draggable split pane between form and response panels with minimum 300px width.
+- **Variable conditions JSON view** — Toggle between list and JSON editing for variable conditions; validation via `parseConditionsJson`.
+
+### Changed
+
+- **Modal** — Escape key handler with proper event listener cleanup.
+- **RuleCard** — Card-level click opens editor; `stopPropagation` on action buttons so toggle/duplicate don't trigger card click.
+- **RuleEditor** — `expandConditionsForDisplay` and `collapseValueForStorage` for readable JSON editing; resizable layout state management.
+- **Options CSS** — New styles for resizable panels, split layout, JSON editor view.
+
+---
+
 ## [1.1.0] — 2026-03-17
 
 ### Added
